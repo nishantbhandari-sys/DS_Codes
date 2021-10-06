@@ -114,32 +114,35 @@ void rear_del( void ){
 
 int main()
 {
-    front_push( ) ;
-    printf( "\nfront = %d, rear = %d\n", front, rear ) ;
+    int n ;
+    printf( "\nSize of DEQue = 5\n" ) ;
+    printf("\n1.	front Push\n");
+	printf("\n2.	front Pop\n");
+    printf("\n3.	rear  Push\n");
+	printf("\n4.	rear  Pop\n");
+	printf("\n5.	display\n");
+	printf("\n6.	Exiting\n");
+	
+    while( 1 ){
+		printf("\nEnter Your Choice: ");
+		scanf( "%d", &n ) ;
 
-    front_push( ) ;
-    printf( "\nfront = %d, rear = %d\n", front, rear ) ;
-    
-    front_push( ) ;
-    printf( "\nfront = %d, rear = %d\n", front, rear ) ;
-    
-    front_push( ) ;
-    printf( "\nfront = %d, rear = %d\n", front, rear ) ;
-    
-    front_push( ) ;
-    printf( "\nfront = %d, rear = %d\n", front, rear ) ;
-    display( ) ;
-    
-    rear_del( ) ;
-    printf( "\nfront = %d, rear = %d\n", front, rear ) ;
-    rear_del( ) ;
-    printf( "\nfront = %d, rear = %d\n", front, rear ) ;
-    rear_del( ) ;
-    printf( "\nfront = %d, rear = %d\n", front, rear ) ;
+		switch( n ){
+
+			case 1:     front_push() ;   	break ;
+			case 2:     front_del () ;		break ;
+			case 3:     rear_push () ;   	break ;
+			case 4:     rear_del  () ;   	break ;
+
+			case 5:     display( ) ;		break ;
+
+			default:	printf("\nExiting...........\n");
+			            return 0;
+		}
+	}
     // rear_push( ) ;
     // printf( "\nfront = %d, rear = %d\n", front, rear ) ;
-
-    display( ) ;
+    // display( ) ;
+    
     return 0;
 }
-
