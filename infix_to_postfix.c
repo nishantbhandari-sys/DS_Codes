@@ -1,37 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// struct name{
-// 	int datra ;
-// } ;
-
-// struct name varname[ 10 ] ;
-
-
 typedef struct {
 	char data ;
 
 } Stack ;
-
 
 Stack* push( Stack *ptr, int *top, char val ){
 
@@ -62,7 +35,6 @@ Stack* push( Stack *ptr, int *top, char val ){
 
 	return temp ;
 }
-
 void display( Stack *ptr, int top ){
 
 	if( top == -1 ){
@@ -71,16 +43,13 @@ void display( Stack *ptr, int top ){
 	}
 
 	printf("\nElements in Stack are: ");
-
 	while( top >= 0 ){
 
 		printf("%c ", ptr[ top ].data );
 		top-- ;
 	}
-
 	printf("\n");
 }
-
 Stack* pop( Stack *ptr, int *top ){
 
 	if( *top == -1 ){
@@ -88,7 +57,7 @@ Stack* pop( Stack *ptr, int *top ){
 		return ptr ;
 	}
 
-	printf("\nPopped Element is: %c\n", ptr[ *top ].data );
+// 	printf("\nPopped Element is: %c\n", ptr[ *top ].data );
 
 	//	When top == 0 that means now our stack will become empty
 	if( *top == 0 ){
@@ -109,7 +78,16 @@ Stack* pop( Stack *ptr, int *top ){
 
 	return temp ;
 }
+
+char peek( Stack *p, int t ){
+    if( t == -1 )
+        return '\0' ;
+        
+    return p[ t ].data ;
+}
 int prcdnc( char c ){
+    // if( top == -1 )
+    //     return -1 ;
     
     switch( c ){
         
@@ -121,6 +99,10 @@ int prcdnc( char c ){
         
         case '^':   return 3 ;
         
+        case '\0':
+        case '(':   return -1 ; //  push_back
+        case ')':   return -10 ; //  POP
+        
         default :   return 0 ;  //  c is operand
     }
 
@@ -130,35 +112,39 @@ void itp( char s[], Stack *stk, int *top ){
     
     for( int i = 0; s[ i ] != '\0'; i++ ){
         
-        if( !prcdnc( s[ i ] ) ){    //  check for operand
-            
+        int x = prcdnc( s[ i ] ) ;
+        
+        if( x == 0 ){    //  check for operand
             printf( "%c", s[ i ] ) ;
         }
-        else{
-            if( prcdnc( s[ i ] ) > prcdnc( stk[ *top ].data ) ){  //  If precedence of ( expression's )current char  is greater  stack's top element
-                stk = push( stk, top, s[ i ] ) ;
-            }
-            else if( s[ i ] == '(' ) {
-                stk = push( stk, top, s[ i ] ) ;
-            }
-            
-            else{   //  now precedence is lower so we have to pop until '(' OR top != -1 OR prcdnc( top ) > prcdnc( s[ i] )
-                
-                while( stk[ *top ].data != '(' && *top != -1 && prcdnc( stk[ *top ].data ) > prcdnc( s[ i ] ) ){\
-                    printf( "%c", stk[ *top ].data ) ;
-                    stk =  pop( stk, top ) ;
-                    
-                }
-                stk[ ++(*top) ].data = s[ i ] ;
-            }
+        else if( x == -1 || x > prcdnc( peek( stk, *top ) ) ){   //  Direct push for '(' OR Prec is higher
+            stk = push( stk, top, s[ i ] ) ;
         }
-        
+            
+        else if( x == -10 ) { //  ')' is Encountered POP until '('
+            
+            while( peek( stk, *top ) != '(' ){
+                printf( "%c", peek( stk, *top ) ) ;
+                stk = pop( stk, top ) ;
+            }
+            stk = pop( stk, top ) ; //  POP '(' also
+            // display( stk, *top ) ;
+        }
+        else{
+             while( prcdnc( peek( stk, *top ) ) >= x  ){
+                printf( "%c", peek( stk, *top ) ) ;
+                stk = pop( stk, top ) ;
+            }
+            stk = push( stk, top, s[ i ] ) ;
+            // display( stk, *top ) ;
+        }
+    }
+    //  Clear remaining Operators from Stack
+    while( *top != -1 ){
+        printf( "%c", peek( stk, *top ) ) ;
+        stk = pop( stk, top ) ;
     }
 }
-
-
-
-
 
 int main(){
 
@@ -168,6 +154,8 @@ int main(){
 
     char s[] = "a+b*(c^d-e)^(f+g*h)-i" ;
     
+    // sptr = push( sptr, &top, '#' ) ;
+    // printf( "%d", prcdnc( 'j' ) ) ;
     itp( s, sptr, &top ) ;
 
     // for( int i = 0; p[ i ] != '\0'; i++ ){
@@ -177,3 +165,4 @@ int main(){
 
 	return 0 ;
 }
+
