@@ -114,10 +114,10 @@ void itp( char s[], Stack *stk, int *top ){
         
         int x = prcdnc( s[ i ] ) ;
         
-        if( x == 0 ){    //  check for operand
+        if( x == 0 ){    //  then s[ i ] is operand
             printf( "%c", s[ i ] ) ;
         }
-        else if( x == -1 || x > prcdnc( peek( stk, *top ) ) ){   //  Direct push for '(' OR Prec is higher
+        else if( x == -1 || x > prcdnc( peek( stk, *top ) ) ){   //  Direct push for '(' OR Prec of x is higher than stk[ top ]
             stk = push( stk, top, s[ i ] ) ;
         }
             
@@ -130,6 +130,7 @@ void itp( char s[], Stack *stk, int *top ){
             stk = pop( stk, top ) ; //  POP '(' also
             // display( stk, *top ) ;
         }
+        //  Now. At this point s[ i ] is only a Operator
         else{
              while( prcdnc( peek( stk, *top ) ) >= x  ){
                 printf( "%c", peek( stk, *top ) ) ;
@@ -149,7 +150,7 @@ void itp( char s[], Stack *stk, int *top ){
 int main(){
 
 	Stack *sptr = NULL ;
-
+	
 	int top = -1 ;
 
     char s[] = "a+b*(c^d-e)^(f+g*h)-i" ;
