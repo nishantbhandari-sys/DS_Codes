@@ -48,23 +48,25 @@ Node* add_End ( Node* head, int val ){
 	return ret ;
 }
 
-Node* rem( Node* head ){
-	Node* ret = head ;
-
-	while( head-> next-> next != NULL ){
-			head = head-> next ;
-	}
-	//	next node is the node which we have to delete
-	free( head-> next ) ;
-	head-> next = NULL ;
-	
-	return ret ;
+Node* del_Beg( Node* head ){
+    if( head == NULL )
+        return head ;
+        
+    Node* tmp = head ;
+    head = head-> next ;
+    
+    free( tmp ) ;
+    
+    return head ;
 }
 
 Node* add_Beg( Node* head, int val ){
 
 	//	create a new node
 	Node* temp = create( val ) ;
+
+    if( head == NULL )
+        return temp ;
 
 	//	Point new node's next to current head
 	temp-> next = head ;
@@ -74,48 +76,34 @@ Node* add_Beg( Node* head, int val ){
 	return head ;
 }
 
-Node* add_Pos( Node* head, int pos, int val ){
-
-	//	create new node for inserting data
-	Node* new = create( val ) ;
-	
-	//	save the return head
-	Node* reth = head ;
-	
-	//	if pos == 1 =>	Insert at Beginning of LL
-	if( pos == 1 )
-		return add_Beg( head, val ) ;
-	
-	//	point to the node after which new node has to be inserted
-	while( pos > 2 ){
-		head = head-> next ;
-		pos-- ;
-	}
-	
-	//	If pos == Last Node's position
-	if( head-> next-> next == NULL ){
-		add_End( head, val ) ;
-		return reth ;
-	}
-	
-	//	add next node's addr. to new node's next
-	//	OR point new node's next to next node
-	new-> next = head-> next ;
-	
-	//	point curr node's next to new node 
-	head-> next = new ;
-	
-	//	return head 
-	return reth ;
-	
-}
-
-Node* sort( Node* head ){
-    
+Node* Insert( Node* head, int val ){
     if( head == NULL ){  //  no node
-        head = add_Beg( head ) ;
+        head = add_Beg( head, val ) ;
+        return head ;
     }
     
+    if( head-> data > val ){
+        head = add_Beg( head, val ) ;
+    }
+    else{
+        int tmp = head-> data ;
+        head = del_Beg( head ) ;
+        head = Insert( head, val ) ;
+        head = add_Beg( head, tmp ) ;
+    }
+    return head ;
+}
+
+Node* sort( Node* head, Node* nh ){
+    
+    if( head == NULL ){  //  no node
+        return head ;
+    }
+    nh = sort( head-> next, nh ) ;
+    
+    nh = Insert( nh, head-> data ) ;
+   
+    return nh ;
 }
 
 int main(){
@@ -124,17 +112,31 @@ int main(){
 	Node *list2 = NULL ;
 	
 	printf( "\nList1: " ) ;
-	list1 = add_End( list1, 23 ) ;
-	list1 = add_End( list1, 43 ) ;
+	list1 = add_End( list1, 73 ) ;
 	list1 = add_End( list1, 53 ) ;
+	list1 = add_End( list1, 33 ) ;
 	
 	display( list1 ) ;
+	list1 = sort( list1, NULL ) ;
 	
-	printf( "List2: " ) ;
-	list2 = add_End( list2, 63 ) ;
-	list2 = add_End( list2, 73 ) ;
+	printf( "List1 Sorted: " ) ;
+	display( list1 ) ;
+	
+	
+	printf( "\nList2: " ) ;
 	list2 = add_End( list2, 83 ) ;
+	list2 = add_End( list2, 93 ) ;
+	list2 = add_End( list2, 53 ) ;
 	
+	display( list2 ) ;
+	list2 = sort( list2, NULL ) ;
+	
+	printf( "List2 Sorted: " ) ;
+	display( list2 ) ;
+
+    list2 = concat( list2, list1 ) ;
+
+    printf( "\nAfter Concat: " ) ;
 	display( list2 ) ;
 
 	return 0 ;
