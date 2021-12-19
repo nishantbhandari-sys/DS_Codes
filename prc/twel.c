@@ -121,31 +121,36 @@ int main(){
 
 	Node *list1 = NULL ;
 	Node *list2 = NULL ;
+	int n = 0 ;
 	
-{
-	printf( "\nList1: " ) ;
-	list1 = add_End( list1, 73 ) ;
-	list1 = add_End( list1, 53 ) ;
-	list1 = add_End( list1, 33 ) ;
+	printf( "\nEnter List1: " ) ;
+	while( 1 ){
+	    scanf( "%d", &n ) ;
+	    
+	    if( n == -1 )
+	        break ;
+	        
+	    list1 = add_End( list1, n ) ;
+	}
 	
-	display( list1 ) ;
+	printf( "\nEnter List2: " ) ;
+	while( 1 ){
+	    scanf( "%d", &n ) ;
+	    
+	    if( n == -1 )
+	        break ;
+	        
+	    list2 = add_End( list2, n ) ;
+	}
+	
 	list1 = sort( list1, NULL ) ;
-	
 	printf( "List1 Sorted: " ) ;
 	display( list1 ) ;
 	
-	
-	printf( "\nList2: " ) ;
-	list2 = add_End( list2, 83 ) ;
-	list2 = add_End( list2, 93 ) ;
-	list2 = add_End( list2, 53 ) ;
-	
-	display( list2 ) ;
 	list2 = sort( list2, NULL ) ;
-	
 	printf( "List2 Sorted: " ) ;
 	display( list2 ) ;
-}
+
     list2 = concat( list2, list1 ) ;
 
     printf( "\nAfter Concat: " ) ;
