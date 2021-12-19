@@ -106,11 +106,23 @@ Node* sort( Node* head, Node* nh ){
     return nh ;
 }
 
+Node* concat( Node* list2, Node* list1 ){
+    Node* tmp = list2 ;
+    
+    while( tmp->next != NULL ){
+        tmp = tmp-> next ;
+    }
+    tmp-> next = list1 ;
+    
+    return list2 ;
+}
+
 int main(){
 
 	Node *list1 = NULL ;
 	Node *list2 = NULL ;
 	
+{
 	printf( "\nList1: " ) ;
 	list1 = add_End( list1, 73 ) ;
 	list1 = add_End( list1, 53 ) ;
@@ -133,7 +145,7 @@ int main(){
 	
 	printf( "List2 Sorted: " ) ;
 	display( list2 ) ;
-
+}
     list2 = concat( list2, list1 ) ;
 
     printf( "\nAfter Concat: " ) ;
