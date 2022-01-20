@@ -1,6 +1,106 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct {
+	int data ;
+
+} Stack ;
+
+
+Stack* push( Stack *ptr, int *top, int val ){
+
+// 	int val ;
+// 	printf( "Enter Element in Stack: " ) ;
+// 	scanf( "%d", &val ) ;
+
+	if( ptr == NULL ){  //  || *top == -1
+		ptr = ( Stack* ) malloc( sizeof( Stack ) * 1 ) ;
+
+		(*top) ++ ;
+		ptr[ *top ].data = val ;
+
+		return ptr ;
+	}
+
+	(*top) ++ ;
+	Stack *temp = ( Stack* ) malloc( sizeof( Stack ) * (*top +1) ) ;
+
+	if( temp == NULL ){
+		printf("\nMemory FULL...\n");
+		return ptr ;
+	}
+
+	for( int i = 0; i < *top; i++ ){
+		temp[ i ].data = ptr[ i ].data ;
+	}
+// 	(*top) ++ ;
+	temp[ *top ].data = val ;
+
+	free( ptr ) ;
+
+	return temp ;
+}
+
+void display( Stack *ptr, int top ){
+
+	if( top == -1 ){
+// 		printf("\nStack is Empty\n") ;
+		return ;
+	}
+
+// 	printf("\nElements in Stack are: ");
+
+	while( top >= 0 ){
+
+		printf("%d ", ptr[ top ].data );
+		top-- ;
+	}
+
+	printf("\n");
+}
+
+Stack* pop( Stack *ptr, int *top ){
+
+	if( *top == -1 ){
+// 		printf("\nCan't POP....Stack is Empty\n");
+		return ptr ;
+	}
+
+// 	printf("\nPopped Element is: %d\n", ptr[ *top ].data );
+
+	//	When top == 0 that means now our stack will become empty
+	if( *top == 0 ){
+		free( ptr ) ;
+		*top = -1 ;
+		return ptr = NULL ;
+	}
+
+	Stack *temp = ( Stack* ) malloc( sizeof( Stack ) * (*top) ) ;
+
+	for (int i = 0; i < *top ; ++i){
+
+		temp[ i ].data = ptr[ i ].data ;
+	}
+
+	(*top) -- ;
+	free( ptr ) ;
+
+	return temp ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 typedef struct node{
     int data ;
     struct node* left ;
@@ -57,7 +157,7 @@ node* max( node* root ){
 }
 node* suc( node* root, int key, node* parent ){
     if( root == NULL || root-> data == key ){
-        return NULL;
+        return root;
     }
     node* child = NULL, *ans = NULL;
     
@@ -76,7 +176,7 @@ node* suc( node* root, int key, node* parent ){
     // printf( "\nparent: %d", parent-> data );
     // printf( "\nchild: %d", child-> data );
     
-    if( child != parent-> right ){
+    if( child != parent-> right ){  //  child is left child of its parent
         return parent;
     }
     
@@ -177,6 +277,39 @@ void replace( node** root, node* u, node* v ){
 //     }
 // }
 
+
+
+
+//  DFS on BST
+int dfs( node* root, int key, Stack* stack, int top ){
+    
+    if( root == NULL )  return 0;
+    
+    if( root-> data == key ) return 1;
+    
+    stack = push( stack, &top, root-> data );
+    
+    if( dfs( root-> left, key, stack, top ) != 0 )
+        return 1;
+        
+    stack = pop( stack, &top );
+    
+    stack = push( stack, &top, root-> data );
+    
+    if( dfs( root-> right, key, stack, top ) != 0 )
+        return 1;
+        
+    stack = pop( stack, &top );
+    
+    return 0;
+}
+//  BFS on BST
+
+
+
+
+
+
 int main(){
     
     node* root = NULL ;
@@ -194,19 +327,30 @@ int main(){
     
     node* x = NULL ;
     
+    //  DFS
+    Stack *stk = NULL;
+    if( dfs( root, 14, stk, -1 ) )
+        printf( "\nfound" );
+    else
+        printf( "\nNot Found" );
+    
+    
+    
+    
+    
     //  Deletion
         // delete( &root, search( root, 5 ) ) ;
         // printf( "\nInOrder: " ) ;
         // inOrder( root ) ;
     
     //  Successor
-        x = root-> left ;
-        printf( "\n%d\n", x-> data );
-        x = successor( root, x ) ;
-        if( x != NULL )
-            printf( "\nSuccessor: %d", x-> data );
-        else
-            printf( "\nNo Successor" ) ;
+        // x = root-> left ;
+        // printf( "\n%d\n", x-> data );
+        // x = successor( root, x ) ;
+        // if( x != NULL )
+        //     printf( "\nSuccessor: %d", x-> data );
+        // else
+        //     printf( "\nNo Successor" ) ;
         
     //  Maximum
         // x = max( root ) ;
