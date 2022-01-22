@@ -1,130 +1,105 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-	int data ;
-
-} Stack ;
-
-
-Stack* push( Stack *ptr, int *top, int val ){
-
-	if( ptr == NULL ){  //  || *top == -1
-		ptr = ( Stack* ) malloc( sizeof( Stack ) * 1 ) ;
-
-		(*top) ++ ;
-		ptr[ *top ].data = val ;
-
-		return ptr ;
-	}
-
-	(*top) ++ ;
-	Stack *temp = ( Stack* ) malloc( sizeof( Stack ) * (*top +1) ) ;
-
-	if( temp == NULL ){
-		printf("\nMemory FULL...\n");
-		return ptr ;
-	}
-
-	for( int i = 0; i < *top; i++ ){
-		temp[ i ].data = ptr[ i ].data ;
-	}
-// 	(*top) ++ ;
-	temp[ *top ].data = val ;
-
-	free( ptr ) ;
-
-	return temp ;
-}
-
-void display( Stack *ptr, int top ){
-
-	if( top == -1 ){
-// 		printf("\nStack is Empty\n") ;
-		return ;
-	}
-
-// 	printf("\nElements in Stack are: ");
-
-	while( top >= 0 ){
-
-		printf("%d ", ptr[ top ].data );
-		top-- ;
-	}
-
-	printf("\n");
-}
-
-Stack* pop( Stack *ptr, int *top ){
-
-	if( *top == -1 ){
-// 		printf("\nCan't POP....Stack is Empty\n");
-		return ptr ;
-	}
-
-// 	printf("\nPopped Element is: %d\n", ptr[ *top ].data );
-
-	//	When top == 0 that means now our stack will become empty
-	if( *top == 0 ){
-		free( ptr ) ;
-		*top = -1 ;
-		return ptr = NULL ;
-	}
-
-	Stack *temp = ( Stack* ) malloc( sizeof( Stack ) * (*top) ) ;
-
-	for (int i = 0; i < *top ; ++i){
-
-		temp[ i ].data = ptr[ i ].data ;
-	}
-
-	(*top) -- ;
-	free( ptr ) ;
-
-	return temp ;
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 typedef struct node{
     int data ;
     struct node* left ;
     struct node* right ;
-    struct node* p ;    //  Parent
     
 } node ;
+
+
+
+typedef struct{
+    
+    node* val ;
+} Queue ;
+
+int front = -1, rear = -1 ;
+
+Queue* enQ( Queue *ptr, node* value ){
+    
+    if( rear == -1 ){
+        front = 0;
+        rear  = 0;
+        
+        Queue *temp = (Queue*) malloc( sizeof( Queue ) ) ;
+        temp[ 0 ].val = value ;
+        
+        return temp ;
+    }
+    
+    rear++ ;
+    Queue *temp = (Queue*) malloc( sizeof( Queue ) * (rear +2) ) ;
+    for( int i = 0; i < rear; i++ ){
+        temp[ i ].val = ptr[ i ].val ;
+    }
+    free( ptr ) ;
+    temp[ rear ].val = value ;
+    
+    return temp ;
+}
+node* peek( Queue *que ){
+    return que[ front ].val;
+}
+Queue* deQ( Queue *ptr ){
+    if( rear == -1 ){
+        return ptr ;
+    }
+    
+    if( rear == 0 ){
+        free( ptr ) ;
+        rear = -1 ;
+        front = -1;
+        
+        return NULL ;
+    }
+    
+    Queue *temp = (Queue*) malloc( sizeof( Queue ) * rear ) ;
+    for( int i = 1; i <= rear; i++ ){
+        temp[ i -1].val = ptr[ i ].val ;
+    }
+    free( ptr ) ;
+    rear-- ;
+    
+    return temp ;
+}
+int isEmpty( Queue *q ){
+    if( rear == -1 )
+        return 1;
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 node* create( int key ){
     //  Creates an ideal node 
     
     node* tmp = (node*) malloc( sizeof( node ) ) ;
     tmp-> data = key ;
-    tmp-> p = NULL ;
     tmp-> left = NULL ;
     tmp-> right = NULL ;
     
     return tmp ;
 }
-void inOrder( node* root ){
-    if( root == NULL ){
-        return ;
-    }
-    
-    inOrder( root-> left ) ;
-    printf( "%d ", root-> data ) ;
-    inOrder( root-> right ) ;
-} 
+
 node* search( node* root, int key ){
     //  returns addr of node == key, if present else NULL
     
@@ -218,24 +193,6 @@ node* successor( node* root, node* arb ){   //  Any arbitary node in tree
     return suc( root, arb-> data, NULL );
 }
 
-
-// void replace( node** root, node* u, node* v ){
-//     //  puts vth node at uth node's place
-//     //  but doesn't take care of v's left and right
-    
-//     if( u == *root ){              //  u is the root node
-//         *root = v ;
-//     }
-//     else if( u-> data < *root-> data ){    //  u is left child of it's parent
-//         u-> p-> left = v ;
-//     }
-//     else{                            //  u is right child of it's parent
-//         u-> p-> right = v ;
-//     }
-//     if( v != NULL )
-//         v-> p = u-> p ;              //  v's new parent is u's parent
-// }
-
 node* delete( node* root, int key ){
     
     //  case 1:
@@ -290,27 +247,57 @@ node* delete( node* root, int key ){
 
 
 
-//  DFS on BST
-int dfs( node* root, int key, Stack* stack, int top ){
-    
-    if( root == NULL )  return 0;
-    
-    if( root-> data == key ) return 1;
-    
-    stack = push( stack, &top, root-> data );
-    
-    if( dfs( root-> left, key, stack, top ) != 0 )
-        return 1;
-    
-    if( dfs( root-> right, key, stack, top ) != 0 )
-        return 1;
+//  DFS traversal on BST:
+    //  3 types:
+        //  1.  preOrder => Root-Left-Right
+        //  2.  inOrder => Left-Root-Right
+        //  3.  postOrder => Left-Right-Root
         
-    stack = pop( stack, &top );
+void preOrder( node* root ){
+    if( root == NULL ){
+        return ;
+    }
     
-    return 0;
+    printf( "%d ", root-> data ) ;
+    preOrder( root-> left ) ;
+    preOrder( root-> right ) ;
 }
-//  BFS on BST
+void inOrder( node* root ){
+    if( root == NULL ){
+        return ;
+    }
+    
+    inOrder( root-> left ) ;
+    printf( "%d ", root-> data ) ;
+    inOrder( root-> right ) ;
+}
+void postOrder( node* root ){
+    if( root == NULL ){
+        return ;
+    }
+    
+    postOrder( root-> left ) ;
+    postOrder( root-> right ) ;
+    printf( "%d ", root-> data ) ;
+}
 
+
+
+//  BFS traversal on BST:
+void bfs( node* root ){
+
+    Queue* que = enQ( que, root );
+    
+    while( !isEmpty( que ) ){
+        
+        root = peek( que );
+        printf( "%d ", root-> data );
+        que = deQ( que );
+        
+        if( root-> left  != NULL )      que = enQ( que, root-> left );
+        if( root-> right != NULL )      que = enQ( que, root-> right );
+    }
+}
 
 
 
@@ -320,35 +307,47 @@ int main(){
     
     node* root = NULL ;
     
+    // insert( &root, create( 10 ) ) ;
+    // insert( &root, create( 5 ) ) ;
+    // insert( &root, create( 12 ) ) ;
+    // insert( &root, create( 11 ) ) ;
+    // insert( &root, create( 15 ) ) ;
+    // insert( &root, create( 13 ) ) ;
+    // insert( &root, create( 14 ) ) ;
+    
     insert( &root, create( 10 ) ) ;
     insert( &root, create( 5 ) ) ;
-    insert( &root, create( 12 ) ) ;
-    insert( &root, create( 11 ) ) ;
     insert( &root, create( 15 ) ) ;
-    insert( &root, create( 13 ) ) ;
-    insert( &root, create( 14 ) ) ;
+    insert( &root, create( 2 ) ) ;
+    insert( &root, create( 7 ) ) ;
+    insert( &root, create( 12 ) ) ;
+    insert( &root, create( 17 ) ) ;
+    insert( &root, create( 11 ) ) ;
+    insert( &root, create( 16 ) ) ;
 
     printf( "\nInOrder: " ) ;
     inOrder( root ) ;
+
     
-    node* x = NULL ;
+    //  BFS
+    printf( "\nbfs: " );
+    bfs( root );
+    
     
     //  DFS
-    // Stack *stk = NULL;
-    // if( dfs( root, 14, stk, -1 ) )
-    //     printf( "\nfound" );
-    // else
-    //     printf( "\nNot Found" );
-    
-    
+    //  preOrder( root );
+    //  inOrder( root );
+    //  postOrder( root );
     
     
     
     //  Deletion
-        delete( root, 10 ) ;
-        printf( "\nInOrder: " ) ;
-        inOrder( root ) ;
-        printf( "\n\n" );
+        // delete( root, 10 ) ;
+        // printf( "\nInOrder: " ) ;
+        // inOrder( root ) ;
+        // printf( "\n\n" );
+        
+        
     //  Successor
         // x = root-> right-> right ;
         // printf( "\nx-> data: %d\n", x-> data );
