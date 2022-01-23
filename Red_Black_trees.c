@@ -41,6 +41,15 @@ void preOrder( node* root ){
     preOrder( root-> left ) ;
     preOrder( root-> right ) ;
 }
+void inColor( node* root ){
+    if( root == NULL ){
+        return ;
+    }
+    
+    inColor( root-> left ) ;
+    printf( "%c ", root-> color ) ;
+    inColor( root-> right ) ;
+}
 void inOrder( node* root ){
     if( root == NULL ){
         return ;
@@ -83,42 +92,38 @@ short correct( node** root, node* z, node* p, node* gp ){
     return ans ;
 }
 
-node* insert( node** root, node* z, node* p, node* gp ){
+node* insert( node** root, node* curr, node* z, node* p, node* gp ){
     //  Inserts a new node z in tree
 
     if( *root == NULL ){
         *root = z;
+        z-> color = 'B';
         return z;
     }
 
-    if( (*root)-> left == NULL || (*root)-> right == NULL ) {
-        if( (*root)-> val < z-> val ){
-            (*root)-> right = z;
+    if( curr-> left == NULL || curr-> right == NULL ) {
+        if( curr-> val < z-> val ){
+            curr-> right = z;
         }
         else{
-            (*root)-> left  = z;
+            curr-> left  = z;
         }
-        if( correct( root, z, *root, p ) ){
+        if( correct( root, z, curr, p ) ){
             return p;
         }
         return NULL;
     }
     
-    if( z-> val < (*root)-> val ){
-        z = insert( root, z, (*root)-> left, p );
+    if( z-> val < curr-> val ){
+        z = insert( root, curr-> left, z, curr, p );
     }
-    else if( z-> val > (*root)-> val ) {
-        z = insert( root, z, (*root)-> right, p );
+    else if( z-> val > curr-> val ) {
+        z = insert( root, curr-> right, z, curr, p );
     }
-    
-    short ans ;
-    
-    if( z == *root ){
-        ans = correct( root, z, p, gp );
-    }
-    
-    if( ans ){
-        return gp;
+
+    if( z == curr ){
+        if( correct( root, z, p, gp ) )
+            return gp;
     }
     return NULL;
 }
@@ -136,14 +141,29 @@ int main(){
     // insert( &root, create( 13 ) ) ;
     // insert( &root, create( 14 ) ) ;
     
-    insert( &root, create( 7 ), NULL, NULL ) ;
-    insert( &root, create( 5 ), NULL, NULL ) ;
-    insert( &root, create( 8 ), NULL, NULL ) ;
-    insert( &root, create( 4 ), NULL, NULL ) ;
+    // insert( &root, root, create( 11 ), NULL, NULL ) ;
+    // insert( &root, root, create( 2 ), NULL, NULL ) ;
+    // insert( &root, root, create( 14 ), NULL, NULL ) ;
+    // insert( &root, root, create( 1 ), NULL, NULL ) ;
+    insert( &root, root, create( 7 ), NULL, NULL ) ;
+    insert( &root, root, create( 5 ), NULL, NULL ) ;
+    insert( &root, root, create( 8 ), NULL, NULL ) ;
+    // insert( &root, root, create( 4 ), NULL, NULL ) ;
+    // insert( &root, root, create( 15 ), NULL, NULL ) ;
+
 
     printf( "\nInOrder: " ) ;
-    inOrder( root ) ;
+    inOrder( root );
+    printf( "\nInColor: " ) ;
+    inColor( root );
     
+    
+    insert( &root, root, create( 4 ), NULL, NULL ) ;
+    
+    printf( "\nInOrder: " ) ;
+    inOrder( root );
+    printf( "\nInColor: " ) ;
+    inColor( root );
     
     
     
