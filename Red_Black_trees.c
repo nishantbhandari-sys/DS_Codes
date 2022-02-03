@@ -1,6 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+  Rules:
+    1.  Every node is either Red or Black.
+    2.  The Root & Leaf nodes in the tree are always Black.
+    3.  A Red node cannot have a Red child, it will only have Black nodes.
+    4.  All paths from Root node, downto all the Leaf nodes, have same no. of Black nodes.
+    
+    
+    
+*/
 
 
 typedef struct node{
